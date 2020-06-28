@@ -39,6 +39,11 @@ const rules = [{
                 minimize: true
             }
         }
-    }
+    },
+    {
+        test: /\.tsx|\.ts?$/,
+        use: 'ts-loader',
+        exclude: /node_modules/,
+      },
 ];
 module.exports = rules;

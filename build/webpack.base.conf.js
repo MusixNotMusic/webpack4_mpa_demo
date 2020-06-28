@@ -52,7 +52,9 @@ module.exports = {
     resolve: {
         alias: {
             '@': path.resolve(__dirname, '../src')
-        }
+        },
+        extensions: [ '.tsx', '.ts', '.js' ],
+
     },
     //将外部变量或者模块加载进来
     externals: {
