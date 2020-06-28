@@ -41,7 +41,7 @@ const rules = [{
         }
     },
     {
-        test: /\.tsx|\.ts?$/,
+        test: /\.ts?$/,
         use: 'ts-loader',
         exclude: /node_modules/,
       },
