@@ -19,9 +19,9 @@ export default class beiMingTopology {
         .domain(["Team A", "Team B", "Team C", "Team D", "Team E"])
         .range(['#ff9e6d', '#86cbff', '#c2e5a0','#fff686','#9e79db'])
 
-    public mainRadius = 25;
+    public mainRadius = 20;
     public mainBorderWidth = 4;
-    public badgeRadius = 10;
+    public badgeRadius = 8;
     public badgeBorderWidth = 2;
 
     public warningColor = ['#00C851','#ffbb33','#ff4444'];
@@ -157,10 +157,12 @@ export default class beiMingTopology {
 
         this.node.append("circle")
             .attr("r", (d: any) => this.mainRadius)//+ d.runtime/20 )
-            .style("stroke", "grey")
+            // .style("stroke", "grey")
             .style("stroke-opacity", 0.3)
             .style("cursor", 'pointer')
-            .style("stroke-width", (d: any) => d.runtime/10)
+            // .style("stroke-width", (d: any) => d.runtime/10)
+            .style("stroke-width", (d: any) => 6)
+            .style("stroke", (d: any) => this.colorScale(d.group))
             .style("fill", (d: any) => this.colorScale(d.group))
        
         this.drawBadge();
@@ -168,9 +170,11 @@ export default class beiMingTopology {
         this.node.append("title")
             .text((d: any) => d.id + ": " + d.label + " - " + d.group +", runtime:"+ d.runtime+ "min");
 
+
         this.node.append("text")
-            .attr("dy", 4)
-            .attr("dx", -15)
+            .attr("y", this.mainRadius + 12)
+            .attr("x", 0)
+            .attr("text-anchor", 'middle')
             .text((d: any) => d.name);
         this.node.append("text")
             .attr("dy",12)
@@ -180,7 +184,7 @@ export default class beiMingTopology {
     //  Badge徽标
     drawBadge() {
         console.log('drawBadge');
-        let numberPos = this.mainRadius - this.mainBorderWidth - 4;
+        let numberPos = this.mainRadius - this.mainBorderWidth - 2;
         let radius = this.badgeRadius - this.badgeBorderWidth;
         // let counter = Number(_.uniqueId());
         let colorSet = (counter: number | string) => { return counter < 5 ? this.warningColor[0] : (counter < 8 ?  this.warningColor[1] : this.warningColor[2] )};
@@ -293,7 +297,6 @@ export default class beiMingTopology {
         d3.select('#render').on('click', () => {
             console.log('regsiterEvent', this);
             this.destroy();
-            // this.create();
             this.fresh();
         })
     }
