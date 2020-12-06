@@ -1,6 +1,6 @@
 import './index.scss'
 // import * as d3 from "d3"
-// import lodash as _ from 'lodash' 
+import _ from 'lodash'
 // import moment from 'moment'
 const d3 = require('d3')
 export default class Wind {
@@ -37,13 +37,16 @@ export default class Wind {
     canvas = null
     timeFormat = d3.utcFormat("%H:%M")
     color = d3.interpolateHslLong("red", "blue")
+    transform = null
     constructor(options = {}) {
         window.temp = this
+        window.d3 = d3
         this.width  = ( options.width  || this.width ) 
         this.height = ( options.height || this.height )
         this.margin = options.margin || this.margin
         this.allWidth = this.width + this.margin.right + this.margin.left
         this.allHeight = this.height + this.margin.top + this.margin.bottom
+        this._render = _.throttle(this.render.bind(this), 50, {trailing: true})
         this.init()
     }
 
@@ -69,8 +72,9 @@ export default class Wind {
         d3.select(this.canvas).call(
             d3.zoom()
               .scaleExtent([0.5, 4])
-              .on("zoom", (event) => { 
-                this.render(event.transform)
+              .on("zoom", () => { 
+                this.transform = d3.event.transform
+                this._render()
              })
         )
     }
@@ -114,8 +118,10 @@ export default class Wind {
     drawWind(d, i) {
       let _x = this.x(d.t) + this.margin.left + 20
       let _y = this.y(d.hei) + this.margin.top
-      this.ctx.translate(100, 100)
-      this.ctx.scale(0.8, 0.8)
+      if(this.transform) {
+        this.ctx.translate(this.transform.x, this.transform.y)
+        this.ctx.scale(this.transform.k, this.transform.k)
+      }
       this.ctx.beginPath()
       let randPath =  this.paths[i % this.paths.length]
       let path = new Path2D(randPath)      
@@ -136,11 +142,11 @@ export default class Wind {
     //   this.ctx.stroke();
     // }
 
-    drawXAxis(transform) {
+    drawXAxis() {
         let ctx = this.ctx
         let x = this.x
-        if(transform) {
-        //   this.rescaleX(x, transform)
+        if(this.transform) {
+          this.rescaleX(x)
         }
         var tickCount = 13,
             tickSize = 6,
@@ -196,20 +202,22 @@ export default class Wind {
         });
       }
 
-    render(transform) {
+    render() {
+        console.log('render')
         this.ctx.clearRect(0, 0, this.allWidth, this.allHeight);
         this.ctx.beginPath();
-        this.ctx.translate(100, 100);
         this.data.forEach(this.drawWind.bind(this))
-        this.drawXAxis(transform)  
-        this.drawYAxis(transform)
+        this.drawXAxis()  
+        this.drawYAxis()
     }
 
 
-    rescaleX(transform) {
-        var range = this.x.range().map(transform.invertX, transform),
+    rescaleX() {
+        var range = this.x.range().map(this.transform.invertX, this.transform),
             domain = range.map(this.x.invert, this.x);
-        return this.x.copy().domain(domain);
+        console.log('range', range, domain)
+        this.x.domain(domain)
+        // return this.x.copy().domain(domain);
     }
 
     getRatio() {
