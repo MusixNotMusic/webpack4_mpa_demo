@@ -114,6 +114,8 @@ export default class Wind {
     drawWind(d, i) {
       let _x = this.x(d.t) + this.margin.left + 20
       let _y = this.y(d.hei) + this.margin.top
+      this.ctx.translate(100, 100)
+      this.ctx.scale(0.8, 0.8)
       this.ctx.beginPath()
       let randPath =  this.paths[i % this.paths.length]
       let path = new Path2D(randPath)      
@@ -197,6 +199,7 @@ export default class Wind {
     render(transform) {
         this.ctx.clearRect(0, 0, this.allWidth, this.allHeight);
         this.ctx.beginPath();
+        this.ctx.translate(100, 100);
         this.data.forEach(this.drawWind.bind(this))
         this.drawXAxis(transform)  
         this.drawYAxis(transform)
