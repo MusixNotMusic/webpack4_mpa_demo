@@ -460,7 +460,7 @@ export default class beiMingTopology {
             
         function zoomed() {
             // console.log('zoomed ==>', d3.event.transform);
-            g.transition().duration(200).ease(d3.easeLinear).attr("transform", d3.event.transform);
+            // g.transition().duration(200).ease(d3.easeLinear).attr("transform", d3.event.transform);
         }
         
         const g = svg.append("g")
@@ -470,7 +470,7 @@ export default class beiMingTopology {
             .attr("transform", `translate(${this.width/2}, ${this.height/2})scale(${0.1}, ${0.1})`)
             // .transition().duration(1000).ease(d3.easeLinear)
             // .attr("transform", `translate(${(this.width) / 2 - offsetWidth},${this.margin.top})scale(${scale}, ${scale})`)
-        g.transition().duration(800).ease(d3.easeCubicInOut).attr("transform", `translate(${left},${top})scale(${scale}, ${scale})`)
+        // g.transition().duration(800).ease(d3.easeCubicInOut).attr("transform", `translate(${left},${top})scale(${scale}, ${scale})`)
 
         const link = g.append("g")
           .attr("fill", "none")

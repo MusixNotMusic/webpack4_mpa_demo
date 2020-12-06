@@ -12,10 +12,13 @@ const rules = [{
     {
         test: /\.js$/,
         use: [{
-            loader: "babel-loader"
+            loader: "babel-loader",
+            // options: {
+            //     plugins: ["plugin-proposal-class-properties"]
+            // }
         }],
         // 不检查node_modules下的js文件
-        // exclude: "/node_modules/"
+        exclude: "/node_modules/"
     }, {
         test: /\.(png|jpg|gif)$/,
         use: [{
