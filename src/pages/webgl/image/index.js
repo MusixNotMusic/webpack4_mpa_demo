@@ -3,7 +3,8 @@ import '../../../assets/css/webgl.css'
 
 function main() {
     var image = new Image()
-    image.src = require("../../../assets/images/leaves.jpg")
+    // image.src = require("../../../assets/images/leaves.jpg")
+    image.src = require("../../../assets/images/earth.jpg")
     image.onload = function() {
         render(image)
     }
@@ -23,7 +24,7 @@ function render(image) {
     var positionBuffer = gl.createBuffer()
 
     gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer)
-    setRectangle(gl, 0, 0, image.width, image.height)
+    setRectangle(gl, 0, 0, image.width / 4, image.height / 4)
 
     var texcoordBuffer = gl.createBuffer()
     gl.bindBuffer(gl.ARRAY_BUFFER, texcoordBuffer)

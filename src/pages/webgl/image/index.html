@@ -42,8 +42,8 @@
 
         void main() {
         // gl_FragColor = texture2D(u_image, v_texCoord);
-         gl_FragColor = texture2D(u_image, v_texCoord).bgra;
-        // gl_FragColor = texture2D(u_image, v_texCoord).rbga;
+        // gl_FragColor = texture2D(u_image, v_texCoord).grba;
+         gl_FragColor = texture2D(u_image, v_texCoord).rbga;
         }
         </script><!--
         for most samples webgl-utils only provides shader compiling/linking and
