@@ -118,35 +118,24 @@ export default class Wind {
     drawWind(d, i) {
       let _x = this.x(d.t) + this.margin.left + 20
       let _y = this.y(d.hei) + this.margin.top
-      if(this.transform) {
-        this.ctx.translate(this.transform.x, this.transform.y)
-        this.ctx.scale(this.transform.k, this.transform.k)
-      }
-      this.ctx.beginPath()
+      let transform = d3.zoomTransform(this.canvas)
       let randPath =  this.paths[i % this.paths.length]
-      let path = new Path2D(randPath)      
-      this.ctx.fillStyle = this.color(i % 46 / 46)
-      this.ctx.translate(_x, _y)
-      // this.ctx.setTransform(this.scale, 0, 0, this.scale, _x, _y)
+      let path = new Path2D(randPath)     
+      this.ctx.beginPath() 
+      this.ctx.translate(transform.applyX(_x), transform.applyY(_y))
+      this.ctx.scale(.5 * transform.k, .5 * transform.k)
       this.ctx.rotate(d.dir / 180 * Math.PI)
+      this.ctx.fillStyle = this.color(i % 46 / 46)
       this.ctx.fill(path)
       this.ctx.resetTransform()
     }
 
-    // drawWind(d, i) {
-    //   let _x = this.x(d.t) + this.margin.left + 20
-    //   let _y = this.y(d.hei) + this.margin.top
-    //   this.ctx.beginPath()
-    //   this.ctx.arc(_x, _y, 2, 0, 2 * Math.PI)
-    //   this.ctx.strokeStyle = this.color(i % 46 / 46)
-    //   this.ctx.stroke();
-    // }
 
     drawXAxis() {
         let ctx = this.ctx
         let x = this.x
         if(this.transform) {
-          this.rescaleX(x)
+          // this.rescaleX(x)
         }
         var tickCount = 13,
             tickSize = 6,
