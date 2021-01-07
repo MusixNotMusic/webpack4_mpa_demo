@@ -37,7 +37,7 @@ function main() {
     var translation = [gl.canvas.clientWidth / 2, gl.canvas.clientHeight / 2, 0]
     var rotation = [degToRad(40), degToRad(25), degToRad(325)]
     var scale = [1, 1, 1]
-    var color = [Math.random(), Math.random(), Math.random(), 1]
+    // var color = [Math.random(), Math.random(), Math.random(), 1]
 
     drawScene()
 
@@ -80,25 +80,32 @@ function main() {
 
         gl.viewport(0, 0, gl.canvas.width, gl.canvas.height)
 
-        gl.clear(gl.COLOR_BUFFER_BIT)
+        gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT)
 
         gl.useProgram(program)
+        //  剔除背面三角形
+        gl.enable(gl.CULL_FACE)
+        gl.enable(gl.DEPTH_TEST)
 
+        // position location
         gl.enableVertexAttribArray(positionLocation)
-
-        gl.enableVertexAttribArray(colorLocation)
-
         gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer)
-
-        gl.bindBuffer(gl.ARRAY_BUFFER, colorBuffer)
-
         var size = 3
         var type = gl.FLOAT
         var normalize = false
         var stride = 0
         var offset = 0
         gl.vertexAttribPointer(positionLocation, size, type, normalize, stride, offset)
-
+        // color location 
+        gl.enableVertexAttribArray(colorLocation)
+        gl.bindBuffer(gl.ARRAY_BUFFER, colorBuffer)
+        var size = 3
+        var type = gl.UNSIGNED_BYTE
+        var normalize = true
+        var stride = 0
+        var offset = 0
+        gl.vertexAttribPointer(colorLocation, size, type, normalize, stride, offset)
+        // matrix
         var matrix = m4.projection(gl.canvas.clientWidth, gl.canvas.clientHeight, 400)
         matrix = m4.translate(matrix, translation[0], translation[1], translation[2])
         matrix = m4.xRotate(matrix, rotation[0])
