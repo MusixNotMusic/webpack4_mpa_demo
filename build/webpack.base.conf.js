@@ -52,6 +52,7 @@ function getEntry() {
             eArr.push(name);
             entry[n] = eArr;
         });
+    console.log('entry -->', entry)
     return entry;
 };
 
@@ -118,5 +119,6 @@ Object.keys(entryObj).forEach(element => {
 
 //自动生成html模板
 htmlArray.forEach((element) => {
+    console.log('htmlArray ->', getHtmlConfig(element._html, element.chunks))
     module.exports.plugins.push(new htmlWebpackPlugin(getHtmlConfig(element._html, element.chunks)));
 })

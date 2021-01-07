@@ -1,8 +1,8 @@
 'use strict'
 import '../../../assets/css/webgl.css'
-import { m4 } from '../m4'
-import { setGeometry } from '../vertex_f_3d'
-import { setColors } from '../color_f_3d'
+import { m4 } from '../../../static/m4'
+import { setGeometry } from '../../../static/vertex_f_3d'
+import { setColors } from '../../../static/color_f_3d'
 
 function main() {
     var canvas = document.querySelector('#canvas')
