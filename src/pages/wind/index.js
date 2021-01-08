@@ -1,8 +1,7 @@
 import './index.scss'
-// import * as d3 from "d3"
+import * as d3 from "d3"
 import _ from 'lodash'
 // import moment from 'moment'
-const d3 = require('d3')
 export default class Wind {
     width = 900
     height = 600
@@ -115,19 +114,38 @@ export default class Wind {
         })
     }
 
+    // drawWind(d, i) {
+    //   let _x = this.x(d.t) + this.margin.left + 20
+    //   let _y = this.y(d.hei) + this.margin.top
+    //   let transform = d3.zoomTransform(this.canvas)
+    //   let randPath =  this.paths[i % this.paths.length]
+    //   let path = new Path2D(randPath)     
+    //   this.ctx.beginPath() 
+    //   this.ctx.translate(transform.applyX(_x), transform.applyY(_y))
+    //   this.ctx.scale(.5 * transform.k, .5 * transform.k)
+    //   this.ctx.rotate(d.dir / 180 * Math.PI)
+    //   this.ctx.fillStyle = this.color(i % 46 / 46)
+    //   this.ctx.fill(path)
+    //   this.ctx.resetTransform()
+    // }
+
+
     drawWind(d, i) {
-      let _x = this.x(d.t) + this.margin.left + 20
-      let _y = this.y(d.hei) + this.margin.top
+      let boxWidth = 20
+      let boxHeight = 40
+      let _x = this.x(d.t) + this.margin.left + 20 - boxWidth / 2
+      let _y = this.y(d.hei) + this.margin.top - boxHeight / 2
       let transform = d3.zoomTransform(this.canvas)
-      let randPath =  this.paths[i % this.paths.length]
-      let path = new Path2D(randPath)     
+      // let randPath =  this.paths[i % this.paths.length]
+      // let path = new Path2D(randPath)     
+      // this.ctx.translate(transform.applyX(_x), transform.applyY(_y))
+      // this.ctx.scale(.5 * transform.k, .5 * transform.k)
       this.ctx.beginPath() 
-      this.ctx.translate(transform.applyX(_x), transform.applyY(_y))
-      this.ctx.scale(.5 * transform.k, .5 * transform.k)
-      this.ctx.rotate(d.dir / 180 * Math.PI)
+      // this.ctx.rotate(d.dir / 180 * Math.PI)
       this.ctx.fillStyle = this.color(i % 46 / 46)
-      this.ctx.fill(path)
-      this.ctx.resetTransform()
+      this.ctx.rect(transform.applyX(_x), transform.applyY(_y), boxWidth, boxHeight)
+      this.ctx.fill()
+      // this.ctx.resetTransform()
     }
 
 
