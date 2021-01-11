@@ -1,6 +1,7 @@
 import './index.scss'
 import * as d3 from "d3"
 import _ from 'lodash'
+import { zoomTransform } from 'd3'
 // import moment from 'moment'
 export default class Wind {
     width = 900
@@ -34,9 +35,10 @@ export default class Wind {
     y = null
     ctx = null
     canvas = null
-    timeFormat = d3.utcFormat("%H:%M")
+    timeFormat = d3.timeFormat("%m-%d %H:%M")
     color = d3.interpolateHslLong("red", "blue")
     transform = null
+    domain = [0, 5000]
     constructor(options = {}) {
         window.temp = this
         window.d3 = d3
@@ -82,14 +84,15 @@ export default class Wind {
       console.log('initX', d3.min(this.data, d => d.t), d3.max(this.data, d => d.t))
       this.x = d3
         .scaleLinear()
-        .domain([d3.min(this.data, d => d.t), d3.max(this.data, d => d.t),])
+        .domain([d3.min(this.data, d => d.t), d3.max(this.data, d => d.t)])
+        // .nice()
         .range([this.margin.left, this.width - this.margin.right])
     }
 
     initY() {
       this.y = d3
         .scaleLinear()
-        .domain([0, 5000])
+        .domain(this.domain)
         .nice()
         .range([this.height - this.margin.bottom, this.margin.top])
     }
@@ -99,8 +102,9 @@ export default class Wind {
     }
 
     getTestData() {
+      let now = Date.now()
         this.data = new Array(this.testDataSize).fill(0).map((item, index) => {
-            let yesterday = Date.now() - 24 * 60 * 60 * 1000;
+            let yesterday = now - 24 * 60 * 60 * 1000;
             return {
                     t:    yesterday + (index / 46 | 0) * 1000 * 60 * 15, 
                     hei:  (index) % 46  * 100, 
@@ -134,66 +138,113 @@ export default class Wind {
       let boxWidth = 20
       let boxHeight = 40
       let _x = this.x(d.t) + this.margin.left + 20 - boxWidth / 2
-      let _y = this.y(d.hei) + this.margin.top - boxHeight / 2
+      let _y = this.y(d.hei) + this.margin.top - boxWidth
       let transform = d3.zoomTransform(this.canvas)
-      // let randPath =  this.paths[i % this.paths.length]
-      // let path = new Path2D(randPath)     
-      // this.ctx.translate(transform.applyX(_x), transform.applyY(_y))
-      // this.ctx.scale(.5 * transform.k, .5 * transform.k)
       this.ctx.beginPath() 
-      // this.ctx.rotate(d.dir / 180 * Math.PI)
       this.ctx.fillStyle = this.color(i % 46 / 46)
       this.ctx.rect(transform.applyX(_x), transform.applyY(_y), boxWidth, boxHeight)
       this.ctx.fill()
-      // this.ctx.resetTransform()
     }
 
 
-    drawXAxis() {
-        let ctx = this.ctx
-        let x = this.x
-        if(this.transform) {
-          // this.rescaleX(x)
-        }
-        var tickCount = 13,
-            tickSize = 6,
-            ticks = x.ticks(tickCount)
-        var yOffset = this.height + this.margin.top - this.margin.bottom ;
-        ctx.beginPath()
-        ticks.forEach((d) => {
-          ctx.moveTo(x(d) + this.margin.left, yOffset + 20);
-          ctx.lineTo(x(d) + this.margin.left, yOffset + 20 + tickSize);
-        });
-        ctx.moveTo(this.margin.left + 20 , yOffset + 20);
-        ctx.lineTo(this.width + this.margin.left, yOffset + 20);
-        ctx.strokeStyle = "black";
-        ctx.stroke();
+    // drawXAxis() {
+    //     let ctx = this.ctx
+    //     let x = this.x
+    //     let transform = d3.zoomTransform(this.canvas)
+    //     var tickCount = 13,
+    //         tickSize = 6,
+    //         ticks = x.ticks(tickCount)
+    //     var yOffset = this.height + this.margin.top - this.margin.bottom 
+    //     var _x = (d) => { return  transform.applyX(x(d)) + this.margin.left } 
+    //     // var _x = (d) => { return x(d) + this.margin.left } 
+    //     ctx.beginPath()
+    //     ticks.forEach((d) => {
+    //       ctx.moveTo(_x(d), yOffset + 20);
+    //       ctx.lineTo(_x(d), yOffset + 20 + tickSize);
+    //     });
+    //     ctx.moveTo(this.margin.left + 20 , yOffset + 20);
+    //     ctx.lineTo(this.width + this.margin.left, yOffset + 20);
+    //     ctx.strokeStyle = "black";
+    //     ctx.stroke();
       
-        ctx.textAlign = "center";
-        ctx.textBaseline = "top";
-        ctx.strokeStyle = "black";
-        ctx.fillStyle = "black";
-        ticks.forEach((d) => {
-          ctx.fillText(this.timeFormat(d), x(d) + this.margin.left , yOffset + 25 + tickSize);
-        });
-        ctx.stroke();
-      }
+    //     ctx.textAlign = "center";
+    //     ctx.textBaseline = "top";
+    //     ctx.strokeStyle = "black";
+    //     ctx.fillStyle = "black";
+    //     // ctx.rotate(-Math.IP / 4)
+    //     ticks.forEach((d) => {
+    //       ctx.fillText(this.timeFormat(d), _x(d) , yOffset + 25 + tickSize)
+    //       ctx.rotate(-Math.IP / 4)
+    //     });
+    //     ctx.stroke();
+    // }
+
+    drawXAxis() {
+      let ctx = this.ctx
+      let x = this.x
+      let transform = d3.zoomTransform(this.canvas)
+      // var tickCount = 13,
+      //     tickSize = 6,
+      //     ticks = x.ticks(tickCount)
+      var yOffset = this.height + this.margin.top - this.margin.bottom 
+      // let domain1 = x.invert(transform.applyX(this.margin.left + 20))
+      // let domain2 = x.invert(transform.applyX(this.width + this.margin.left)) 
+      // let domain1 = x.invert(transform.x + (this.margin.left + 20))
+      // let domain2 = x.invert(transform.x + (this.width + this.margin.left)) 
+      // this.x.domain([domain1, domain2])
+      var _x = (d) => { return  transform.applyX(x(d)) + this.margin.left }
+
+      // var _x = (d) => { return x(d) + this.margin.left }
+      var tickCount = 13,
+          tickSize = 6,
+          ticks = x.ticks(tickCount)
+      ctx.beginPath()
+      ticks.forEach((d) => {
+        ctx.moveTo(_x(d), yOffset + 20);
+        ctx.lineTo(_x(d), yOffset + 20 + tickSize);
+      });
+      ctx.moveTo(this.margin.left + 20 , yOffset + 20);
+      ctx.lineTo(this.width + this.margin.left, yOffset + 20);
+      ctx.strokeStyle = "black";
+      ctx.stroke()
+      ctx.closePath()
+
+      ctx.textAlign = "center";
+      ctx.textBaseline = "top";
+      ctx.strokeStyle = "black";
+      ctx.fillStyle = "black";
+      // ctx.rotate(-Math.PI / 4)
+      ticks.forEach((d) => {
+        ctx.fillText(this.timeFormat(d), _x(d) , yOffset + 25 + tickSize)
+      });
+    }
 
 
-    drawYAxis(transrorm) {
+    drawYAxis() {
         let ctx = this.ctx
+        this.initY()
         let y = this.y
+        // let y1 = y.invert(this.height + this.margin.top)
+        // let y2 = y.invert(this.margin.top)
+        // console.log(y1, y2)
+        // y.domain([y, y2])
+        let transform = d3.zoomTransform(this.canvas)
+        let y1 = transform.applyY(this.domain[0])
+        let y2 = transform.applyY(this.domain[1])
+        console.log(this.domain[0], this.domain[1], y1, y2)
+        y.domain([y1, y2])
         var tickCount = 10,
             tickSize = 6,
             tickPadding = 3,
             ticks = y.ticks(tickCount),
             tickFormat = y.tickFormat(tickCount);
         var xOffset = this.margin.left + 20
+        var _y = (d) => { return transform.applyY(y(d) + this.margin.top + this.margin.bottom) - 10 }
         // ticks
         ctx.beginPath();
         ticks.forEach((d) => {
-          ctx.moveTo(xOffset, y(d) + this.margin.top);
-          ctx.lineTo(xOffset - 6, y(d) + this.margin.top);
+          ctx.moveTo(xOffset, _y(d));
+          ctx.lineTo(xOffset - 6, _y(d));
         });
         ctx.moveTo(xOffset, this.margin.top);
         ctx.lineTo(xOffset, this.height + this.margin.top - 10);
@@ -205,26 +256,18 @@ export default class Wind {
         ctx.textBaseline = "middle";
         ctx.fillStyle = "black";
         ticks.forEach((d) => {
-          ctx.fillText(tickFormat(d), xOffset - tickSize - tickPadding, y(d) + this.margin.top);
-        });
+          ctx.fillText(tickFormat(d), xOffset - tickSize - tickPadding, _y(d));
+        })
+        ctx.stroke();
       }
 
     render() {
-        console.log('render')
+        console.log('render', d3.zoomTransform(this.canvas))
         this.ctx.clearRect(0, 0, this.allWidth, this.allHeight);
         this.ctx.beginPath();
         this.data.forEach(this.drawWind.bind(this))
         this.drawXAxis()  
         this.drawYAxis()
-    }
-
-
-    rescaleX() {
-        var range = this.x.range().map(this.transform.invertX, this.transform),
-            domain = range.map(this.x.invert, this.x);
-        console.log('range', range, domain)
-        this.x.domain(domain)
-        // return this.x.copy().domain(domain);
     }
 
     getRatio() {
