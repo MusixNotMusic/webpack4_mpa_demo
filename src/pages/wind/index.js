@@ -35,7 +35,8 @@ export default class Wind {
     y = null
     ctx = null
     canvas = null
-    timeFormat = d3.timeFormat("%m-%d %H:%M")
+    dateFormat = d3.timeFormat("%m-%d %H:%M")
+    secondFormat = d3.timeFormat("%H:%M")
     color = d3.interpolateHslLong("red", "blue")
     transform = null
     domain = [0, 5000]
@@ -181,8 +182,9 @@ export default class Wind {
 
     drawXAxis() {
       let ctx = this.ctx
-      let x = this.x
       let transform = d3.zoomTransform(this.canvas)
+      // let x = this.x
+      let x = transform.rescaleX(this.x)
       // var tickCount = 13,
       //     tickSize = 6,
       //     ticks = x.ticks(tickCount)
@@ -192,12 +194,13 @@ export default class Wind {
       // let domain1 = x.invert(transform.x + (this.margin.left + 20))
       // let domain2 = x.invert(transform.x + (this.width + this.margin.left)) 
       // this.x.domain([domain1, domain2])
-      var _x = (d) => { return  transform.applyX(x(d)) + this.margin.left }
+      // var _x = (d) => { return  transform.applyX(x(d)) + this.margin.left }
 
-      // var _x = (d) => { return x(d) + this.margin.left }
+      var _x = (d) => { return x(d) + this.margin.left }
       var tickCount = 13,
           tickSize = 6,
           ticks = x.ticks(tickCount)
+          console.log('ticks =>', ticks.length)
       ctx.beginPath()
       ticks.forEach((d) => {
         ctx.moveTo(_x(d), yOffset + 20);
@@ -215,31 +218,30 @@ export default class Wind {
       ctx.fillStyle = "black";
       // ctx.rotate(-Math.PI / 4)
       ticks.forEach((d) => {
-        ctx.fillText(this.timeFormat(d), _x(d) , yOffset + 25 + tickSize)
+        // console.log(transform.k,  this.dateFormat(d),  this.secondFormat(d))
+        ctx.fillText( ticks.length <= 12 ? this.dateFormat(d) : this.secondFormat(d), _x(d) , yOffset + 25 + tickSize)
       });
     }
 
 
     drawYAxis() {
         let ctx = this.ctx
-        this.initY()
-        let y = this.y
-        // let y1 = y.invert(this.height + this.margin.top)
-        // let y2 = y.invert(this.margin.top)
-        // console.log(y1, y2)
-        // y.domain([y, y2])
         let transform = d3.zoomTransform(this.canvas)
-        let y1 = transform.applyY(this.domain[0])
-        let y2 = transform.applyY(this.domain[1])
-        console.log(this.domain[0], this.domain[1], y1, y2)
-        y.domain([y1, y2])
+        // let y = this.y
+        let y = transform.rescaleY(this.y)
+        // let y = transform.rescaleX(this.y)
+        // let y1 = transform.applyY(this.domain[0])
+        // let y2 = transform.applyY(this.domain[1])
+        // console.log(this.domain[0], this.domain[1], y1, y2)
+        // y.domain([y1, y2])
         var tickCount = 10,
             tickSize = 6,
             tickPadding = 3,
             ticks = y.ticks(tickCount),
             tickFormat = y.tickFormat(tickCount);
         var xOffset = this.margin.left + 20
-        var _y = (d) => { return transform.applyY(y(d) + this.margin.top + this.margin.bottom) - 10 }
+        // var _y = (d) => { return transform.applyY(y(d)) + this.margin.top + this.margin.bottom - 10 }
+        var _y = (d) => { return y(d)+ this.margin.top + this.margin.bottom - 10 }
         // ticks
         ctx.beginPath();
         ticks.forEach((d) => {
