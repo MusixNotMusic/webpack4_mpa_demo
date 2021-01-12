@@ -75,8 +75,7 @@ export default class Wind {
             d3.zoom()
               .scaleExtent([0.5, 4])
               .on("zoom", () => { 
-                this.transform = d3.event.transform
-                this._render()
+                this.render()
              })
         )
     }
@@ -119,33 +118,35 @@ export default class Wind {
         })
     }
 
-    // drawWind(d, i) {
-    //   let _x = this.x(d.t) + this.margin.left + 20
-    //   let _y = this.y(d.hei) + this.margin.top
-    //   let transform = d3.zoomTransform(this.canvas)
-    //   let randPath =  this.paths[i % this.paths.length]
-    //   let path = new Path2D(randPath)     
-    //   this.ctx.beginPath() 
-    //   this.ctx.translate(transform.applyX(_x), transform.applyY(_y))
-    //   this.ctx.scale(.5 * transform.k, .5 * transform.k)
-    //   this.ctx.rotate(d.dir / 180 * Math.PI)
-    //   this.ctx.fillStyle = this.color(i % 46 / 46)
-    //   this.ctx.fill(path)
-    //   this.ctx.resetTransform()
-    // }
-
-
     drawWind(d, i) {
-      let boxWidth = 20
-      let boxHeight = 40
+      let boxWidth = 9
+      let boxHeight = 30
       let _x = this.x(d.t) + this.margin.left + 20 - boxWidth / 2
-      let _y = this.y(d.hei) + this.margin.top - boxWidth
+      let _y = this.y(d.hei) + this.margin.top - boxHeight / 2
       let transform = d3.zoomTransform(this.canvas)
+      let randPath =  this.paths[i % this.paths.length]
+      let path = new Path2D(randPath)     
       this.ctx.beginPath() 
+      this.ctx.translate(transform.applyX(_x), transform.applyY(_y))
+      this.ctx.scale(.5 * transform.k, .5 * transform.k)
+      this.ctx.rotate(d.dir / 180 * Math.PI)
       this.ctx.fillStyle = this.color(i % 46 / 46)
-      this.ctx.rect(transform.applyX(_x), transform.applyY(_y), boxWidth, boxHeight)
-      this.ctx.fill()
+      this.ctx.fill(path)
+      this.ctx.resetTransform()
     }
+
+
+    // drawWind(d, i) {
+    //   let boxWidth = 20
+    //   let boxHeight = 40
+    //   let _x = this.x(d.t) + this.margin.left + 20 - boxWidth / 2
+    //   let _y = this.y(d.hei) + this.margin.top - boxWidth
+    //   let transform = d3.zoomTransform(this.canvas)
+    //   this.ctx.beginPath() 
+    //   this.ctx.fillStyle = this.color(i % 46 / 46)
+    //   this.ctx.rect(transform.applyX(_x), transform.applyY(_y), boxWidth, boxHeight)
+    //   this.ctx.fill()
+    // }
 
 
     // drawXAxis() {
@@ -183,24 +184,12 @@ export default class Wind {
     drawXAxis() {
       let ctx = this.ctx
       let transform = d3.zoomTransform(this.canvas)
-      // let x = this.x
       let x = transform.rescaleX(this.x)
-      // var tickCount = 13,
-      //     tickSize = 6,
-      //     ticks = x.ticks(tickCount)
       var yOffset = this.height + this.margin.top - this.margin.bottom 
-      // let domain1 = x.invert(transform.applyX(this.margin.left + 20))
-      // let domain2 = x.invert(transform.applyX(this.width + this.margin.left)) 
-      // let domain1 = x.invert(transform.x + (this.margin.left + 20))
-      // let domain2 = x.invert(transform.x + (this.width + this.margin.left)) 
-      // this.x.domain([domain1, domain2])
-      // var _x = (d) => { return  transform.applyX(x(d)) + this.margin.left }
-
       var _x = (d) => { return x(d) + this.margin.left }
       var tickCount = 13,
           tickSize = 6,
           ticks = x.ticks(tickCount)
-          console.log('ticks =>', ticks.length)
       ctx.beginPath()
       ticks.forEach((d) => {
         ctx.moveTo(_x(d), yOffset + 20);
@@ -227,13 +216,7 @@ export default class Wind {
     drawYAxis() {
         let ctx = this.ctx
         let transform = d3.zoomTransform(this.canvas)
-        // let y = this.y
         let y = transform.rescaleY(this.y)
-        // let y = transform.rescaleX(this.y)
-        // let y1 = transform.applyY(this.domain[0])
-        // let y2 = transform.applyY(this.domain[1])
-        // console.log(this.domain[0], this.domain[1], y1, y2)
-        // y.domain([y1, y2])
         var tickCount = 10,
             tickSize = 6,
             tickPadding = 3,
@@ -264,7 +247,7 @@ export default class Wind {
       }
 
     render() {
-        console.log('render', d3.zoomTransform(this.canvas))
+        // console.log('render', d3.zoomTransform(this.canvas))
         this.ctx.clearRect(0, 0, this.allWidth, this.allHeight);
         this.ctx.beginPath();
         this.data.forEach(this.drawWind.bind(this))
