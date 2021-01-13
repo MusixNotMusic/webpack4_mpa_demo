@@ -7,7 +7,7 @@ export default class Wind{
     margin = {top: 20, right: 30, bottom: 30, left: 40}
     allWidth = 0
     allHeight = 0
-    testDataSize = 10000
+    testDataSize = 46 * 100
     paths = [
         'M 4 2 Q 4 1.2 3.4 0.6 2.8 0 2 0 1.2 0 0.6 0.6 0 1.2 0 2 0 2.8 0.6 3.4 1.2 4 2 4 2.8 4 3.4 3.4 4 2.8 4 2 M 3.1 0.9 Q 3.6 1.3 3.6 2 3.6 2.7 3.1 3.1 2.6 3.6 2 3.6 1.3 3.6 0.8 3.1 0.4 2.7 0.4 2 0.4 1.3 0.8 0.9 1.3 0.4 2 0.4 2.6 0.4 3.1 0.9 Z',
         'M 5.3 0 L 3.7 0 3.7 30 5.3 30 5.3 0 Z',
@@ -182,7 +182,7 @@ export default class Wind{
       this.x = d3
         .scaleLinear()
         .domain([d3.min(this.data, d => d.t), d3.max(this.data, d => d.t)])
-        .range([this.margin.left, this.width + this.margin.left])
+        .range([this.margin.left, this.width])
     }
 
     initY() {
@@ -244,7 +244,7 @@ export default class Wind{
       let _x = this.x(d.t) - boxWidth / 2
       let _y = this.y(d.hei) - boxHeight
       this.contextOverlay.beginPath() 
-      this.contextOverlay.fillStyle = this.color1(Math.log2(i) / Math.pow(i, 0.3) )
+      this.contextOverlay.fillStyle = this.color1(i % 46 / 46)
       // this.contextOverlay.fillStyle = this.colorRainbow(Math.log2(i) / Math.pow(i, 0.3) + i / 20 )
       // this.contextOverlay.fillStyle = this.colorRainbow(Math.random())
       this.contextOverlay.rect(transform.applyX(_x), transform.applyY(_y), boxWidth * transform.k, boxHeight * transform.k)
