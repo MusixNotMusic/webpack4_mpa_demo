@@ -67,7 +67,6 @@ export default class Wind{
 
     init() {
         this.getTestData()
-        // this.createPanel()
         this.createContainer()
             .createAxisLayer()
             .createOverlayLayer()
@@ -182,7 +181,7 @@ export default class Wind{
       this.x = d3
         .scaleLinear()
         .domain([d3.min(this.data, d => d.t), d3.max(this.data, d => d.t)])
-        .range([this.margin.left, this.width])
+        .range([0, this.width])
     }
 
     initY() {
