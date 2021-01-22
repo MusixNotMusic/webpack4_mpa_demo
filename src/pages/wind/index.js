@@ -2,9 +2,9 @@ import './index.scss'
 import * as d3 from "d3"
 import _ from 'lodash'
 export default class Wind{
-    width = 900
+    width = 350
     height = 600
-    margin = {top: 20, right: 30, bottom: 30, left: 40}
+    margin = {top: 20, right: 30, bottom: 30, left: 30}
     allWidth = 0
     allHeight = 0
     testDataSize = 46 * 100
@@ -269,6 +269,7 @@ export default class Wind{
       ctx.lineTo(this.width + this.margin.left, yOffset);
       ctx.strokeStyle = "black";
 
+      ctx.font = '8px Arial'
       ctx.textAlign = "center";
       ctx.textBaseline = "top";
       ctx.strokeStyle = "black";
@@ -304,6 +305,7 @@ export default class Wind{
         
         // text
         ctx.textAlign = "right";
+        ctx.font = '8px Arial'
         ctx.textBaseline = "middle";
         ctx.fillStyle = "black";
         ticks.forEach((d) => {

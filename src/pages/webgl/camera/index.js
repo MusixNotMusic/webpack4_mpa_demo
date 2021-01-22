@@ -86,14 +86,14 @@ function main() {
         var projectionMatrix = m4.perspective(fieldOfViewRadians, aspect, zNear, zFar)
         // compute a matrix for the camera
         // case 1 
-        // var cameraMatrix = m4.yRotation(cameraAngleRadians)
-        // cameraMatrix = m4.translate(cameraMatrix, 0, 0, radius * 2)
-        // var viewMatrix = m4.inverse(cameraMatrix)
-        // var viewProjectionMatrix = m4.multiply(projectionMatrix, viewMatrix)
-        // case 2 
         var cameraMatrix = m4.yRotation(cameraAngleRadians)
-        cameraMatrix = m4.translate(cameraMatrix, Math.cos(cameraAngleRadians - Math.PI / 2) * radius * 2, 0, Math.sin(cameraAngleRadians - Math.PI / 2) * radius * 2)
-        var viewProjectionMatrix = m4.multiply(projectionMatrix, cameraMatrix)
+        cameraMatrix = m4.translate(cameraMatrix, 0, 0, radius * 2)
+        var viewMatrix = m4.inverse(cameraMatrix)
+        var viewProjectionMatrix = m4.multiply(projectionMatrix, viewMatrix)
+        // case 2 
+        // var cameraMatrix = m4.yRotation(cameraAngleRadians)
+        // cameraMatrix = m4.translate(cameraMatrix, Math.cos(cameraAngleRadians - Math.PI / 2) * radius * 2, 0, Math.sin(cameraAngleRadians - Math.PI / 2) * radius * 2)
+        // var viewProjectionMatrix = m4.multiply(projectionMatrix, cameraMatrix)
 
         for (var ii = 0; ii < numFs; ++ii) {
             var angle = ii * Math.PI * 2 / numFs
